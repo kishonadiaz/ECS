@@ -1,0 +1,1 @@
+namespace ECS.Contracts.Requests; public record RegisterEmployeeRequest(string Name, string Email, string? Role);

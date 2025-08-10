@@ -1,0 +1,1 @@
+namespace ECS.Contracts.Requests; public record CheckoutRequest(int EquipmentId, int EmployeeId);

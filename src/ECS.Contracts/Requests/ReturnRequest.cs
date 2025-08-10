@@ -1,0 +1,1 @@
+namespace ECS.Contracts.Requests; public record ReturnRequest(int EquipmentId, int EmployeeId);

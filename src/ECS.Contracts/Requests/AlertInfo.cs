@@ -1,0 +1,1 @@
+namespace ECS.Contracts.Requests; public record AlertInfo(string AlertType, int RecipientEmployeeId, DateTime TriggerDate);
