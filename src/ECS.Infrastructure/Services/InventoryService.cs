@@ -24,8 +24,23 @@ public Task CheckoutAsync(CheckoutRequest request)
         return Task.CompletedTask;
     }
 
-// TODO: Handle late returns (fees/flags) 
- public Task ReturnAsync(ReturnRequest request)
+//public Task GetEquipments(RequestEquipment request)
+//    {
+//        var emp = InMemoryStore.Employees.FirstOrDefault(e => e.EmployeeId == request.UserId)
+//                  ?? throw new InvalidOperationException("Employee not found");
+//        var item = InMemoryStore.Equipment.FirstOrDefault(e => e.EquipmentId == request.EquipmentId)
+//                   ?? throw new InvalidOperationException("Equipment not found");
+        
+       
+//    }
+
+    public Task RequestEquipmentAync(RequestEquipment request)
+    {
+        throw new NotImplementedException();
+    }
+
+    // TODO: Handle late returns (fees/flags) 
+    public Task ReturnAsync(ReturnRequest request)
     {
         var item = InMemoryStore.Equipment.FirstOrDefault(e => e.EquipmentId == request.EquipmentId)
                    ?? throw new InvalidOperationException("Equipment not found");
@@ -45,4 +60,5 @@ public Task CheckoutAsync(CheckoutRequest request)
     }
 
     private int NewLogId() => InMemoryStore.ActivityLogs.Count == 0 ? 1 : InMemoryStore.ActivityLogs.Max(l => l.LogId) + 1;
+
 }

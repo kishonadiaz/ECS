@@ -66,7 +66,7 @@ if (InMemoryStore.Equipment.Count == 0)
 // Map a redirect for the root URL
 app.MapGet("/", context =>
 {
-    context.Response.Redirect("/index.html"); // Replace with your desired API endpoint
+    context.Response.Redirect("/login.html"); // Replace with your desired API endpoint
     return Task.CompletedTask;
 });
 app.MapGet("/health", () => Results.Ok(new HealthResponse { Status = "OK", Service = "ECS.Api" }));

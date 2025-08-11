@@ -18,6 +18,13 @@ public class InventoryController : ControllerBase
          await _inventory.CheckoutAsync(request);
         return Ok();
     }
+    //[HttpPost("list")]
+    //public async Task<IActionResult> ListEquipment([FromBody] ReturnRequest request)
+    //{
+
+    //    await _inventory.ReturnAsync(request);
+    //    return Ok();
+    //}
 
     [HttpPost("return")]
     public async Task<IActionResult> Return([FromBody] ReturnRequest request)
