@@ -28,6 +28,9 @@ builder.Services.AddSingleton<IAlertService, AlertService>();
 // === Authentication ===
  builder.Services.AddSingleton<IAuthService, AuthService>();
 
+// ===Reports ===
+builder.Services.AddSingleton<IReportService, ReportService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
