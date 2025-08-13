@@ -1,19 +1,28 @@
 ﻿//import { run } from "../main.js"
 //console.log(run)
 
-export class Running {
-    constructor() {
-        this.passing = () => { }
-    }
+//export class Running {
+//    constructor() {
+//        this.passing = () => { }
+//    }
 
-    add = (vars = {}, callback = () => { }) => {
-        this.passing = callback();
-    }
-    get update(){
-        return this.passing
-    }
-}
+//    add = (vars = {}, callback = () => { }) => {
+//        this.passing = callback();
+//    }
+//    get update(){
+//        return this.passing
+//    }
+//}
 
+/*
+
+TODO ChartJs has to go in its own component
+
+*/
+/*
+    NewLocation takes the element that is being passed and sets the innner html from the reponse used in Button calls to change the dashboard layout from the dash template buttons
+
+*/
 export function NewLocation(element, htm, callback=()=> { }) {
     setTimeout(() => {
         element.innerHTML = htm;
@@ -21,6 +30,11 @@ export function NewLocation(element, htm, callback=()=> { }) {
     }, 300)
     
 }
+
+/*
+    Nav is a component that is responable for the navigation of the dashboard it fetches from the templates and dynamicly
+    injects into the element maincont where the template then appears and then after the call to dash is a new instance from the initially loaded dash so the chart is different
+*/
 export function Nav(element) {
     var elem = document.querySelector(element);
     if(elem)
@@ -53,13 +67,11 @@ function clickaction(ev) {
                         console.log(html);
                         let d = document.createElement("div");
                         d.innerHTML = html;
-                        //const parser = new DOMParser();
-                        //const doc = parser.parseFromString(html, 'text/html');
-                        //console.log(doc)
+  
 
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML
-                            //Nav("#navSelections");
+                            
                             
                         }, 300)
 
@@ -72,13 +84,11 @@ function clickaction(ev) {
                         console.log(html);
                         let d = document.createElement("div");
                         d.innerHTML = html;
-                        //const parser = new DOMParser();
-                        //const doc = parser.parseFromString(html, 'text/html');
-                        //console.log(doc)
+
 
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML
-                            //Nav("#navSelections");
+
                         }, 300)
 
                     })
@@ -90,9 +100,7 @@ function clickaction(ev) {
                         console.log(html);
                         let d = document.createElement("div");
                         d.innerHTML = html;
-                        //const parser = new DOMParser();
-                        //const doc = parser.parseFromString(html, 'text/html');
-                        //console.log(doc)
+
 
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML

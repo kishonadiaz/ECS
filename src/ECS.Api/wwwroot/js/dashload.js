@@ -12,6 +12,16 @@ async function load() {
                 .then(async response => {
                     let html = await response.text()
                     let maincont = document.querySelector("#maincont")
+                    let nav = document.querySelector("#nav")
+                    let drawer = document.querySelector("#drawer")
+                    console.log(nav)
+                    if(nav)
+                        nav.classList.add("open")
+                    if (drawer)
+                        drawer.classList.add("open")
+                    //drawer.classList.add("open")
+
+
                     //console.log(html);
                     let d = document.createElement("div");
                     d.innerHTML = html;
