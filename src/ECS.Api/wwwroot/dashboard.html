@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #drawer {
+            background: grey;
+            color: whitesmoke;
+            display: inline-block;
+            height: 100%;
+            padding: 20px;
+            float: left;
+            width: 10%;
+            list-style-type: none;
+            position: relative;
+        }
+
+            #drawer ul {
+                position: absolute;
+                padding: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+
+            #drawer li {
+                list-style-type: none;
+                cursor: pointer;
+                padding: 10px;
+                /* background:lightgrey; */
+                width: 100%;
+                margin: 10px 0px;
+                text-decoration: none;
+            }
+
+            #drawer span {
+                user-select: none;
+                pointer-events: none;
+            }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        #drawer li:hover {
+            background: lightgrey;
+        }
+
+        #drawer li:active {
+            background: darkgrey;
+        }
+
+
+        main {
+            float: right;
+            width: 75%; /* fits alongside drawer */
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-container {
+            flex: 0 0 70%; /* chart height ratio */
+        }
+
+        main canvas {
+            width: 70% !important;
+            height: 50% !important;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            right: 14%;
+            margin-top: 10px;
+            position: relative;
+        }
+    </style>
+    <script src="js/chartJS/chart.umd.js"></script>
+    <script >
+        let checkoutaction = (ev) => {
+    console.log(ev)
+}
+
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        -->
+        <div class="container-fluid">
+            <a class="navbar-brand">ECS</a>
+            <!-- <form class="d-flex"> -->
+            <!--     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
+            <!--     <button class="btn btn-outline-success" type="submit">Search</button> -->
+            <!-- </form> -->
+        </div>
+    </nav>
+    <div id="drawer">
+        <ul id="navSelections">
+            <li><span data-action="dash">Dash</span></li>
+            <li><span data-action="checkout">Checkouts</span></li>
+            <li><span data-action="return">Returns</span></li>
+            <li><span data-action="logout">Log Out</span></li>
+        </ul>
+    </div>
+    <main id="maincont">
+
+    </main>
+    
+    <script type="module" src="js/dashload.js"></script>
+
+    <script src="./js/bootstrap.min.js"></script>
+</body>
+</html>

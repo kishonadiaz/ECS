@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script>
+         history.pushState(null, null, location.href); // Pushes the current page to history
+        window.onpopstate = function () {
+            history.go(1); // Navigates forward if the user tries to go back
+        };
+        sessionStorage.removeItem('authToken');
+        setTimeout(()=>{
+          
+            location.href = "/";
+        
+        },1)
+     
+    
+        //  const token = sessionStorage.getItem('authToken');
+        // if (!token) {
+        //     console.error("No token found");
+            
+           
+        // }
+    </script>
+</body>
+</html>

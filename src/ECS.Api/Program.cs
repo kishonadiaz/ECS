@@ -28,7 +28,16 @@ builder.Services.AddSingleton<IAlertService, AlertService>();
 // === Authentication ===
  builder.Services.AddSingleton<IAuthService, AuthService>();
 
+// ===Reports ===
+builder.Services.AddSingleton<IReportService, ReportService>();
+
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+app.UseStaticFiles();
 
 // Basic exception mapping
 app.Use(async (ctx, next) =>
@@ -57,6 +66,12 @@ if (InMemoryStore.Equipment.Count == 0)
     });
 }
 
+// Map a redirect for the root URL
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/login.html"); // Replace with your desired API endpoint
+    return Task.CompletedTask;
+});
 app.MapGet("/health", () => Results.Ok(new HealthResponse { Status = "OK", Service = "ECS.Api" }));
 
 // Debug read-only
