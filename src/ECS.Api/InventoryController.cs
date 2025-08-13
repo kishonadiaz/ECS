@@ -28,5 +28,14 @@ namespace ECS.Api.Controllers
             await _inventory.ReturnAsync(request);
             return Ok();
         }
+        
+        [HttpPost("{equipmentId}/availability")]
+        public async Task<IActionResult> SetAvailability(
+            int equipmentId,
+            [FromBody] SetAvailabilityRequest request) 
+        {
+            await _inventory.SetAvailabilityAsync(equipmentId, request);
+            return Ok();
+        }
     }
 }
