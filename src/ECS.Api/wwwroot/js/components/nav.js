@@ -1,4 +1,5 @@
 ﻿import { ChartComp } from "./chartcomponent.js"
+import { TabelElementsBuild } from "./tableactions.js"
 
 //import { run } from "../main.js"
 //console.log(run)
@@ -25,27 +26,50 @@ TODO ChartJs has to go in its own component
     NewLocation takes the element that is being passed and sets the innner html from the reponse used in Button calls to change the dashboard layout from the dash template buttons
 
 */
-function createTableElement(thtext, tdtext, ev = () => { }) {
+//function createTableElement(thtext, tdtext,btnval, ev = () => { }) {
+//    let tr = document.createElement("tr");
+//    let th = document.createElement("th");
+//    th.setAttribute("scope", "row")
+//    th.innerHTML = thtext;
+//    let td = document.createElement("td");
+//    td.innerHTML = tdtext
+//    let tdbtn = document.createElement("td");
+//    let button = document.createElement("button")
+//    button.className = "btn btn-primary";
+//    button.type = "button"
+//    button.innerHTML = btnval
+//    tdbtn.appendChild(button);
+//    tr.append(th)
+//    tr.append(td)
+//    tr.append(tdbtn)
+
+//    tdbtn.addEventListener("click",ev)
+//    return tr;
+
+//}
+function createTableElement(element, btnval, ev = () => { }) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
     th.setAttribute("scope", "row")
-    th.innerHTML = thtext;
+    th.innerHTML = element.equipmentId;
     let td = document.createElement("td");
-    td.innerHTML = tdtext
+    td.innerHTML = element.name
     let tdbtn = document.createElement("td");
     let button = document.createElement("button")
     button.className = "btn btn-primary";
     button.type = "button"
-    button.innerHTML = "Checkout"
+    button.innerHTML = btnval
+    button.setAttribute("data-id", element.equipmentId)
     tdbtn.appendChild(button);
     tr.append(th)
     tr.append(td)
     tr.append(tdbtn)
 
-    tdbtn.addEventListener("click",ev)
+    tdbtn.addEventListener("click", ev)
     return tr;
 
 }
+
 export function NewLocation(element, htm, callback=()=> { }) {
     setTimeout(() => {
         element.innerHTML = htm;
@@ -97,20 +121,27 @@ function clickaction(ev) {
                             maincont.innerHTML = d.innerHTML
                             setTimeout(() => {
                                 console.log("ok")
-                                fetch(`./api/Equipment/GetAll`, { method: "GET" })
-                                    .then(async responsed => {
+                                TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`, "Available", () => {
+                                    var table = document.getElementById("checkouttable")
+                                })
+                                //fetch(`./api/Equipment/GetAll`, { method: "GET" })
+                                //    .then(async responsed => {
 
 
-                                        let data = await responsed.json();
-                                        console.log(data);
-                                        var table = document.getElementById("checkouttable")
-                                        for (var i of data) {
-                                            console.log(i)
-                                            table.append(createTableElement(i.equipmentId, i.name))
-                                        }
+                                //        let data = await responsed.json();
+                                //        console.log(data);
+                                //        var table = document.getElementById("checkouttable")
+                                //        for (var i of data) {
+                                //            console.log(i)
+                                //            if (i.status == "Available") {
+                                //                table.append(createTableElement(i.equipmentId, i.name,"Checkout" ,(ev) => {
+                                //                    console.log(ev);
+                                //                }))
+                                //            }
+                                //        }
 
 
-                                    })
+                                //    })
                             }, 200)
                             
                         }, 300)
@@ -128,6 +159,12 @@ function clickaction(ev) {
 
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML
+                            setTimeout(() => {
+                                console.log("ok")
+                                TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                    var table = document.getElementById("checkouttable")
+                                })
+                            }, 200)
 
                         }, 300)
 
@@ -152,23 +189,28 @@ function clickaction(ev) {
                             checkoutbutton.addEventListener("click", () => {
                                 fetch('./templates/checkout.html')
                                     .then(async responses => {
-                                        NewLocation(maincont, await responses.text())
-                                        setTimeout(() => {
-                                            console.log("ok")
-                                            fetch(`./api/Equipment/GetAll`, { method: "GET" })
-                                                .then(async responsed => {
-
-                                                    let data = await responsed.json()
-                                                    console.log(data);
-
+                                        NewLocation(maincont, await responses.text(), () => {
+                                            setTimeout(() => {
+                                                console.log("ok")
+                                                TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`, "Available", () => {
+                                                    var table = document.getElementById("checkouttable")
                                                 })
-                                        },200)
+                                            }, 200)
+                                        })
+                                       
                                     })
                             })
                             returnbutton.addEventListener("click", () => {
                                 fetch('./templates/returns.html')
                                     .then(async responses => {
-                                        NewLocation(maincont, await responses.text())
+                                        NewLocation(maincont, await responses.text(), () => {
+                                            setTimeout(() => {
+                                                console.log("ok")
+                                                TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                                    var table = document.getElementById("checkouttable")
+                                                })
+                                            }, 200)
+                                        })
                                        
                                     })
                             })

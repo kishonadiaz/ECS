@@ -2,6 +2,7 @@ using ECS.Core.Entities;
 using ECS.Core.Services;
 using ECS.Contracts.Requests;
 using ECS.Infrastructure.InMemory;
+using System.Diagnostics;
 
 namespace ECS.Infrastructure.Services;
 
@@ -9,8 +10,9 @@ public class InventoryService : IInventoryService
 {
 public Task CheckoutAsync(CheckoutRequest request)
     {
+        Debug.WriteLine(request.EquipmentId);
         var emp = InMemoryStore.Employees.FirstOrDefault(e => e.EmployeeId == request.EmployeeId)
-                  ?? throw new InvalidOperationException("Employee not found");
+                  ?? throw new InvalidOperationException($"Employee not found {request.EmployeeId}");
         var item = InMemoryStore.Equipment.FirstOrDefault(e => e.EquipmentId == request.EquipmentId)
                    ?? throw new InvalidOperationException("Equipment not found");
         if (item.Status == "CheckedOut") throw new InvalidOperationException("Equipment already checked out");
@@ -42,6 +44,7 @@ public Task CheckoutAsync(CheckoutRequest request)
     // TODO: Handle late returns (fees/flags) 
     public Task ReturnAsync(ReturnRequest request)
     {
+        Debug.WriteLine( request.EquipmentId);
         var item = InMemoryStore.Equipment.FirstOrDefault(e => e.EquipmentId == request.EquipmentId)
                    ?? throw new InvalidOperationException("Equipment not found");
         if (item.Status != "CheckedOut" || item.AssignedEmployeeId != request.EmployeeId)

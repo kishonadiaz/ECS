@@ -1,18 +1,20 @@
 ﻿import { Nav, NewLocation } from "./components/nav.js"
+import { TabelElementsBuild } from "./components/tableactions.js"
 import { ChartComp } from "./components/chartcomponent.js"
 
-function createTableElement(thtext, tdtext, ev = () => { }) {
+function createTableElement(element, btnval, ev = () => { }) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
     th.setAttribute("scope", "row")
-    th.innerHTML = thtext;
+    th.innerHTML = element.equipmentId;
     let td = document.createElement("td");
-    td.innerHTML = tdtext
+    td.innerHTML = element.name
     let tdbtn = document.createElement("td");
     let button = document.createElement("button")
     button.className = "btn btn-primary";
     button.type = "button"
-    button.innerHTML = "Checkout"
+    button.innerHTML = btnval
+    button.setAttribute("data-id", element.equipmentId)
     tdbtn.appendChild(button);
     tr.append(th)
     tr.append(td)
@@ -59,35 +61,115 @@ async function load() {
                         let checkoutbutton = document.querySelector("#checkoutbtn")
                         let returnbutton = document.querySelector("#returnbtn")
                         checkoutbutton.addEventListener("click", () => {
-                            fetch('./templates/checkout.html')
+                            //fetch('./templates/checkout.html')
+                            //    .then(async responses => {
+                            //        NewLocation(maincont, await responses.text(), () => {
+                            //            setTimeout(() => {
+                            //                console.log("ok")
+                            //                fetch(`./api/Equipment/GetAll`, { method: "GET" })
+                            //                    .then(async responsed => {
+
+
+
+
+                            //                        let data = await responsed.json();
+                            //                        console.log(data);
+                            //                        var table = document.getElementById("checkouttable")
+                            //                        for (var i of data) {
+                            //                            console.log(i)
+                            //                            if (i.status == "Available") {
+                            //                                table.append(createTableElement(i, "Checkout", (ev) => {
+                            //                                    const urlParams = new URLSearchParams(window.location.search);
+                            //                                    const uid = urlParams.getAll('uid');
+                            //                                    console.log(ev, i.equipmentId, uid);
+
+
+
+
+                            //                                    fetch(`../api/Inventory/checkout`, {
+                            //                                        method: "POST",
+                            //                                        headers: {
+                            //                                            "Content-Type": "application/json"
+                            //                                        },
+                            //                                        body: JSON.stringify({
+                            //                                            "equipmentId": parseInt(ev.target.getAttribute("data-id")),
+                            //                                            "employeeId": parseInt(uid[0])
+                            //                                        })
+                            //                                    })
+                            //                                        .then(async responsed => {
+                            //                                            console.log(responsed)
+
+                            //                                        })
+
+                            //                                }))
+
+
+                            //                            }
+                            //                        }
+
+                            //                    })
+                            //            }, 200)
+                            //        })
+
+                            //    })
+                            TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`,"Available", () => {
+                                var table = document.getElementById("checkouttable")
+                            })
+                        })
+                        returnbutton.addEventListener("click", () => {
+                            
+                            fetch('./templates/returns.html')
                                 .then(async responses => {
                                     NewLocation(maincont, await responses.text(), () => {
                                         setTimeout(() => {
                                             console.log("ok")
-                                            fetch(`./api/Equipment/GetAll`, { method: "GET" })
-                                                .then(async responsed => {
+                                            TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`,"CheckedOut", () => {
+                                                var table = document.getElementById("checkouttable")
+                                            })
+                                            //fetch(`./api/Equipment/GetAll`, { method: "GET" })
+                                            //    .then(async responsed => {
 
 
-                                                   
+                                            //        TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`, () => {
+                                            //            var table = document.getElementById("checkouttable")
+                                            //        })
 
-                                                    let data = await responsed.json();
-                                                    console.log(data);
-                                                    var table = document.getElementById("checkouttable")
-                                                    for (var i of data) {
-                                                        console.log(i)
-                                                        table.append(createTableElement(i.equipmentId,i.name))
-                                                    }
+                                            //        let data = await responsed.json();
+                                            //        console.log(data);
+                                            //        var table = document.getElementById("checkouttable")
+                                            //        for (var i of data) {
+                                            //            console.log(i)
+                                            //            if (i.status == "CheckedOut") {
+                                            //                const urlParams = new URLSearchParams(window.location.search);
+                                            //                const uid = urlParams.getAll('uid');
+                                            //                table.append(createTableElement(i,"Return" ,(ev) => {
+                                            //                    console.log(ev,i.equipmentId);
+                                                                
+                                            //                    fetch(`./api/Inventory/return`, {
+                                            //                        method: "POST",
+                                            //                        headers: {
+                                            //                            "Content-Type": "application/json"
+                                            //                        },
+                                            //                        body: JSON.stringify({
+                                            //                            "equipmentId": parseInt(ev.target.getAttribute("data-id")),
+                                            //                            "employeeId": parseInt(uid)
+                                            //                        })
+                                            //                    })
+                                            //                        .then(async responsed => {
+                                            //                            console.log(responsed)
+                                            //                            fetch(`./api/Equipment/GetAll`, { method: "GET" })
+                                            //                                .then(async responsed => { 
+                                                                               
+                                            //                                })
+                                            //                    })
+                                            //                }))
+                                            //            }
+                                            //        }
 
-                                                })
+                                            //    })
                                         }, 200)
                                     })
 
-                                })
-                        })
-                        returnbutton.addEventListener("click", () => {
-                            fetch('./templates/returns.html')
-                                .then(async responses => {
-                                    NewLocation(maincont, await responses.text())
                                 })
                         })
 
