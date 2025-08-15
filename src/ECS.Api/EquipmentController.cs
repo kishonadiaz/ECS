@@ -11,7 +11,7 @@ namespace ECS.Api.Controllers
         /// <summary>
         /// Production list of all equipment.
         /// </summary>
-        [HttpGet]
+        [HttpGet("GetAll")]
         public ActionResult<IEnumerable<Equipment>> GetAll()
             => Ok(InMemoryStore.Equipment);
 
