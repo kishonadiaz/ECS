@@ -31,6 +31,9 @@ builder.Services.AddSingleton<IAlertService, AlertService>();
 // ===Reports ===
 builder.Services.AddSingleton<IReportService, ReportService>();
 
+// ===Transaction===
+builder.Services.AddSingleton<ITransactionService, TransactionService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
