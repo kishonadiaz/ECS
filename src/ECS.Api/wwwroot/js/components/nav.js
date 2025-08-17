@@ -1,5 +1,5 @@
 ﻿import { ChartComp } from "./chartcomponent.js"
-import { TabelElementsBuild } from "./tableactions.js"
+import { TabelElementsBuild, TabelInvElementsBuild } from "./tableactions.js"
 
 //import { run } from "../main.js"
 //console.log(run)
@@ -90,7 +90,11 @@ export function Nav(element) {
 }
 function clickaction(ev) {
     let maincont = document.querySelector("#maincont")
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.getAll('uid');
+    let chartcomp = new ChartComp();
     let elem = ev.target
+    let emp = undefined;
     if (elem) {
         console.log(ev)
         let child = ev.target.children[0]
@@ -169,7 +173,164 @@ function clickaction(ev) {
                         }, 300)
 
                     })
-            } else if (action == "dash") {
+            } else if (action == "inventory") {
+                fetch('./templates/inventory.html')
+                    .then(async response => {
+                        let html = await response.text()
+
+                        console.log(html);
+                        let d = document.createElement("div");
+                        d.innerHTML = html;
+
+
+                        setTimeout(() => {
+                            maincont.innerHTML = d.innerHTML
+                            setTimeout(() => {
+                                console.log("ok")
+                                TabelInvElementsBuild("./templates/inventory.html", "#maincont")
+                            }, 200)
+
+                        }, 300)
+
+                    })
+            } else if (action == "report") {
+                fetch('./templates/report.html')
+                    .then(async response => {
+                        let html = await response.text()
+
+                        console.log(html);
+                        let d = document.createElement("div");
+                        d.innerHTML = html;
+
+
+                        setTimeout(() => {
+                            maincont.innerHTML = d.innerHTML
+                            setTimeout(() => {
+                                console.log("ok")
+                                fetch('./templates/report.html')
+                                    .then(async responses => {
+                                        NewLocation(maincont, await responses.text(), () => {
+                                            setTimeout(() => {
+                                                fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
+                                                    .then(async responses => {
+                                                        let data = await responses.json();
+                                                        for (var [i, item] of Object.entries(data)) {
+                                                            console.log(i, item)
+                                                            chartcomp.addMonths(item.month)
+                                                            chartcomp.addData(item.count)
+                                                        }
+
+                                                        //console.log(checkoutbutton)
+                                                        const ctx = document.getElementById('myChart');
+                                                        if (ctx) {
+                                                            //console.log(chartcomp.getMonths(), chartcomp.getData())
+                                                            new Chart(ctx, {
+                                                                type: 'line',
+                                                                data: {
+                                                                    labels: chartcomp.getMonths(),
+                                                                    datasets: [{
+                                                                        label: 'Number of Checkouts',
+                                                                        data: chartcomp.getData(),
+                                                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                                                        tension: 0.3, // smooth curves
+                                                                        fill: true,
+                                                                        pointRadius: 5,
+                                                                        pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                                                                    }]
+                                                                },
+                                                                options: {
+                                                                    responsive: false,
+                                                                    plugins: {
+                                                                        title: {
+                                                                            display: true,
+                                                                            text: 'Tool Checked Out per Month'
+                                                                        }
+                                                                    },
+                                                                    scales: {
+                                                                        y: {
+                                                                            beginAtZero: true,
+                                                                            title: { display: true, text: 'Checked Out' }
+                                                                        },
+                                                                        x: {
+                                                                            title: { display: true, text: 'Month' }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+
+                                                    })
+                                                //const ctx = document.getElementById('circlegraph').getContext('2d');
+                                                //const myPieChart = new Chart(ctx, {
+                                                //    type: 'pie',
+                                                //    data: {
+                                                //        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                                                //        datasets: [{
+                                                //            label: 'Example Data',
+                                                //            data: [12, 19, 3, 5, 2, 3],
+                                                //            backgroundColor: [
+                                                //                'rgba(255, 99, 132, 0.2)',
+                                                //                'rgba(54, 162, 235, 0.2)',
+                                                //                'rgba(255, 206, 86, 0.2)',
+                                                //                'rgba(75, 192, 192, 0.2)',
+                                                //                'rgba(153, 102, 255, 0.2)',
+                                                //                'rgba(255, 159, 64, 0.2)'
+                                                //            ],
+                                                //            borderColor: [
+                                                //                'rgba(255, 99, 132, 1)',
+                                                //                'rgba(54, 162, 235, 1)',
+                                                //                'rgba(255, 206, 86, 1)',
+                                                //                'rgba(75, 192, 192, 1)',
+                                                //                'rgba(153, 102, 255, 1)',
+                                                //                'rgba(255, 159, 64, 1)'
+                                                //            ],
+                                                //            borderWidth: 1
+                                                //        }]
+                                                //    },
+                                                //    options: {
+                                                //        responsive: true,
+                                                //        plugins: {
+                                                //            legend: {
+                                                //                position: 'top',
+                                                //            },
+                                                //            title: {
+                                                //                display: true,
+                                                //                text: 'Pie Chart Example'
+                                                //            }
+                                                //        }
+                                                //    }
+                                                //});
+                                            }, 300)
+
+                                            //setTimeout(() => {
+                                            //    console.log("ok")
+                                            //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                            //        var table = document.getElementById("checkouttable")
+                                            //    })
+
+                                            //}, 200)
+                                        })
+
+                                    })
+                                //TabelElementsBuild("./templates/reor.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                //    var table = document.getElementById("checkouttable")
+                                //})
+                            }, 200)
+
+                        }, 300)
+
+                    })
+            }
+
+
+            else if (action == "dash") {
+                fetch(`/api/Employees/${uid}`, { method: "GET" })
+                    .then(async responses => {
+                        emp = await responses.json()
+
+                        //console.log(emp);
+                    
                 fetch('./templates/dash.html')
                     .then(async response => {
                         let html = await response.text()
@@ -184,8 +345,14 @@ function clickaction(ev) {
                             const uid = urlParams.getAll('uid');
                             let chartcomp = new ChartComp();
                             maincont.innerHTML = d.innerHTML
+                            if (emp.role != "Manager") {
+                                document.getElementById("reportedUI").style.display = "none";
+                                document.getElementById("reports").style.display = "none";
+                            }
                             let checkoutbutton = document.querySelector("#checkoutbtn")
                             let returnbutton = document.querySelector("#returnbtn")
+                            let invbutton = document.querySelector("#inventory")
+                            let reportsbutton = document.querySelector("#reports")
                             checkoutbutton.addEventListener("click", () => {
                                 fetch('./templates/checkout.html')
                                     .then(async responses => {
@@ -212,6 +379,143 @@ function clickaction(ev) {
                                             }, 200)
                                         })
                                        
+                                    })
+                            })
+                            invbutton.addEventListener("click", () => {
+
+                                fetch('./templates/inventory.html')
+                                    .then(async responses => {
+                                        NewLocation(maincont, await responses.text(), () => {
+                                            setTimeout(() => {
+                                                console.log("ok")
+                                                TabelInvElementsBuild("./templates/inventory.html", "#maincont")
+                                               
+
+                                            }, 200)
+                                        })
+
+                                    })
+                            })
+                            reportsbutton.addEventListener("click", () => {
+
+                                fetch('./templates/report.html')
+                                    .then(async responses => {
+                                        NewLocation(maincont, await responses.text(), () => {
+                                            fetch('./templates/report.html')
+                                                .then(async responses => {
+                                                    NewLocation(maincont, await responses.text(), () => {
+                                                        setTimeout(() => {
+                                                            fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
+                                                                .then(async responses => {
+                                                                    let data = await responses.json();
+                                                                    //for (var [i, item] of Object.entries(data)) {
+                                                                    //    console.log(i, item)
+                                                                    //    chartcomp.addMonths(item.month)
+                                                                    //    chartcomp.addData(item.count)
+                                                                    //}
+
+                                                                    //console.log(checkoutbutton)
+                                                                    const ctx = document.getElementById('myChart');
+                                                                    if (ctx) {
+                                                                        console.log(chartcomp.getMonths(), chartcomp.getData())
+                                                                        new Chart(ctx, {
+                                                                            type: 'line',
+                                                                            data: {
+                                                                                labels: chartcomp.getMonths(),
+                                                                                datasets: [{
+                                                                                    label: 'Number of Checkouts',
+                                                                                    data: chartcomp.getData(),
+                                                                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                                                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                                                                    tension: 0.3, // smooth curves
+                                                                                    fill: true,
+                                                                                    pointRadius: 5,
+                                                                                    pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                                                                                }]
+                                                                            },
+                                                                            options: {
+                                                                                responsive: false,
+                                                                                plugins: {
+                                                                                    title: {
+                                                                                        display: true,
+                                                                                        text: 'Tool Checked Out per Month'
+                                                                                    }
+                                                                                },
+                                                                                scales: {
+                                                                                    y: {
+                                                                                        beginAtZero: true,
+                                                                                        title: { display: true, text: 'Checked Out' }
+                                                                                    },
+                                                                                    x: {
+                                                                                        title: { display: true, text: 'Month' }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+
+                                                                })
+                                                            //const ctx = document.getElementById('circlegraph').getContext('2d');
+                                                            //const myPieChart = new Chart(ctx, {
+                                                            //    type: 'pie',
+                                                            //    data: {
+                                                            //        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                                                            //        datasets: [{
+                                                            //            label: 'Example Data',
+                                                            //            data: [12, 19, 3, 5, 2, 3],
+                                                            //            backgroundColor: [
+                                                            //                'rgba(255, 99, 132, 0.2)',
+                                                            //                'rgba(54, 162, 235, 0.2)',
+                                                            //                'rgba(255, 206, 86, 0.2)',
+                                                            //                'rgba(75, 192, 192, 0.2)',
+                                                            //                'rgba(153, 102, 255, 0.2)',
+                                                            //                'rgba(255, 159, 64, 0.2)'
+                                                            //            ],
+                                                            //            borderColor: [
+                                                            //                'rgba(255, 99, 132, 1)',
+                                                            //                'rgba(54, 162, 235, 1)',
+                                                            //                'rgba(255, 206, 86, 1)',
+                                                            //                'rgba(75, 192, 192, 1)',
+                                                            //                'rgba(153, 102, 255, 1)',
+                                                            //                'rgba(255, 159, 64, 1)'
+                                                            //            ],
+                                                            //            borderWidth: 1
+                                                            //        }]
+                                                            //    },
+                                                            //    options: {
+                                                            //        responsive: true,
+                                                            //        plugins: {
+                                                            //            legend: {
+                                                            //                position: 'top',
+                                                            //            },
+                                                            //            title: {
+                                                            //                display: true,
+                                                            //                text: 'Pie Chart Example'
+                                                            //            }
+                                                            //        }
+                                                            //    }
+                                                            //});
+                                                        }, 300)
+
+                                                        //setTimeout(() => {
+                                                        //    console.log("ok")
+                                                        //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                                        //        var table = document.getElementById("checkouttable")
+                                                        //    })
+
+                                                        //}, 200)
+                                                    })
+
+                                                })
+                                            //setTimeout(() => {
+                                            //    console.log("ok")
+                                            //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                            //        var table = document.getElementById("checkouttable")
+                                            //    })
+
+                                            //}, 200)
+                                        })
+
                                     })
                             })
                             fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
@@ -268,6 +572,7 @@ function clickaction(ev) {
                             //Nav("#navSelections");
                         }, 300)
 
+                    })
                     })
             }
         

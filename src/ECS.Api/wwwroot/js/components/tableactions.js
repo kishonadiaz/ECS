@@ -21,6 +21,46 @@
 
 }
 
+function DateFormatter(date) {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+    });
+    const formattedDate = formatter.format(date);
+    return formattedDate;
+}
+
+function createTableInvElement(element, callback = () => { }) {
+    let tr = document.createElement("tr");
+    let th = document.createElement("th");
+    th.setAttribute("scope", "row")
+    th.innerHTML = element.equipmentId;
+    let td = document.createElement("td");
+    td.innerHTML = element.name
+    let tdstat = document.createElement("td");
+    tdstat.innerHTML = element.status
+    let tdCdate = document.createElement("td");
+    console.log(element);
+    tdCdate.innerHTML = (element.checkoutDate == null) ? "Not Checkout" : DateFormatter(new Date(element.checkoutDate));
+    let tdRdate = document.createElement("td");
+    tdRdate.innerHTML = (element.returnDueDate == null) ? "Not Checkout" : DateFormatter(new Date(element.returnDueDate));
+
+    let tdAEmp = document.createElement("td");
+    tdAEmp.innerHTML = (element.assignedEmployeeId == null) ? "Not Checkout" : element.assignedEmployeeId;
+
+    tr.append(th)
+    tr.append(td)
+    tr.append(tdstat)
+    tr.append(tdCdate)
+    tr.append(tdRdate)
+    tr.append(tdAEmp)
+
+    callback();
+    return tr;
+
+}
+
 export function TabelElementsBuild(whereTemplate, elem, what, status, callback = () => { }) {
     let btntext = "";
     const urlParams = new URLSearchParams(window.location.search);
@@ -73,6 +113,36 @@ export function TabelElementsBuild(whereTemplate, elem, what, status, callback =
                             }
                         }
                        
+                    }
+
+                })
+
+
+
+            let html = await responses.text()
+            elem = document.querySelector(elem)
+            elem.innerHTML = html;
+            callback()
+        })
+}
+export function TabelInvElementsBuild(whereTemplate, elem,  callback = () => { }) {
+    let btntext = "";
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.getAll('uid');
+    fetch(whereTemplate)
+        .then(async responses => {
+            console.log("safdkjljsafd")
+            fetch(`./api/Equipment/GetAll`, { method: "GET" })
+                .then(async responsed => {
+
+                    let data = await responsed.json();
+                    console.log(data);
+                    var table = document.getElementById("checkouttable")
+                    for (var i of data) {
+                        console.log(i)
+                        table.append(createTableInvElement(i))
+                       
+
                     }
 
                 })

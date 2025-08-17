@@ -1,5 +1,5 @@
 ﻿import { Nav, NewLocation } from "./components/nav.js"
-import { TabelElementsBuild } from "./components/tableactions.js"
+import { TabelElementsBuild, TabelInvElementsBuild } from "./components/tableactions.js"
 import { ChartComp } from "./components/chartcomponent.js"
 
 function createTableElement(element, btnval, ev = () => { }) {
@@ -24,14 +24,57 @@ function createTableElement(element, btnval, ev = () => { }) {
     return tr;
 
 }
+function createRadialGradient3(context, c1, c2, c3) {
+    const chartArea = context.chart.chartArea;
+    if (!chartArea) {
+        // This case happens on initial chart load
+        return;
+    }
+
+    const chartWidth = chartArea.right - chartArea.left;
+    const chartHeight = chartArea.bottom - chartArea.top;
+    if (width !== chartWidth || height !== chartHeight) {
+        cache.clear();
+    }
+    let gradient = cache.get(c1 + c2 + c3);
+    if (!gradient) {
+        // Create the gradient because this is either the first render
+        // or the size of the chart has changed
+        width = chartWidth;
+        height = chartHeight;
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const centerY = (chartArea.top + chartArea.bottom) / 2;
+        const r = Math.min(
+            (chartArea.right - chartArea.left) / 2,
+            (chartArea.bottom - chartArea.top) / 2
+        );
+        const ctx = context.chart.ctx;
+        gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, r);
+        gradient.addColorStop(0, c1);
+        gradient.addColorStop(0.5, c2);
+        gradient.addColorStop(1, c3);
+        cache.set(c1 + c2 + c3, gradient);
+    }
+
+    return gradient;
+}
 async function load() {
-   
+    let emp = undefined;
     const token = sessionStorage.getItem('authToken');
     if (!token) {
         location.replace("./loginredirect.html");
         // return;
     } else {
         try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const uid = urlParams.getAll('uid');
+            fetch(`/api/Employees/${uid}`, { method: "GET" })
+                .then(async responses => {
+                    emp = await responses.json()
+
+                    console.log(emp);
+                    
+
             fetch('./templates/dash.html')
                 .then(async response => {
                     let html = await response.text()
@@ -43,75 +86,32 @@ async function load() {
                         nav.classList.add("open")
                     if (drawer)
                         drawer.classList.add("open")
+                   
                     //drawer.classList.add("open")
 
 
                     //console.log(html);
                     let d = document.createElement("div");
                     d.innerHTML = html;
+
                     //const parser = new DOMParser();
                     //const doc = parser.parseFromString(html, 'text/html');
                     //console.log(doc)
                     
                     setTimeout(() => {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const uid = urlParams.getAll('uid');
+                        
                         let chartcomp = new ChartComp();
                         maincont.innerHTML = d.innerHTML
+                        if (emp.role != "Manager") {
+                            document.getElementById("reportedUI").style.display = "none";
+                            document.getElementById("reports").style.display = "none";
+                        }
                         let checkoutbutton = document.querySelector("#checkoutbtn")
                         let returnbutton = document.querySelector("#returnbtn")
+                        let invbutton = document.querySelector("#inventory")
+                        let reportsbutton = document.querySelector("#reports")
                         checkoutbutton.addEventListener("click", () => {
-                            //fetch('./templates/checkout.html')
-                            //    .then(async responses => {
-                            //        NewLocation(maincont, await responses.text(), () => {
-                            //            setTimeout(() => {
-                            //                console.log("ok")
-                            //                fetch(`./api/Equipment/GetAll`, { method: "GET" })
-                            //                    .then(async responsed => {
-
-
-
-
-                            //                        let data = await responsed.json();
-                            //                        console.log(data);
-                            //                        var table = document.getElementById("checkouttable")
-                            //                        for (var i of data) {
-                            //                            console.log(i)
-                            //                            if (i.status == "Available") {
-                            //                                table.append(createTableElement(i, "Checkout", (ev) => {
-                            //                                    const urlParams = new URLSearchParams(window.location.search);
-                            //                                    const uid = urlParams.getAll('uid');
-                            //                                    console.log(ev, i.equipmentId, uid);
-
-
-
-
-                            //                                    fetch(`../api/Inventory/checkout`, {
-                            //                                        method: "POST",
-                            //                                        headers: {
-                            //                                            "Content-Type": "application/json"
-                            //                                        },
-                            //                                        body: JSON.stringify({
-                            //                                            "equipmentId": parseInt(ev.target.getAttribute("data-id")),
-                            //                                            "employeeId": parseInt(uid[0])
-                            //                                        })
-                            //                                    })
-                            //                                        .then(async responsed => {
-                            //                                            console.log(responsed)
-
-                            //                                        })
-
-                            //                                }))
-
-
-                            //                            }
-                            //                        }
-
-                            //                    })
-                            //            }, 200)
-                            //        })
-
-                            //    })
+                           
                             TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`,"Available", () => {
                                 var table = document.getElementById("checkouttable")
                             })
@@ -126,53 +126,140 @@ async function load() {
                                             TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`,"CheckedOut", () => {
                                                 var table = document.getElementById("checkouttable")
                                             })
-                                            //fetch(`./api/Equipment/GetAll`, { method: "GET" })
-                                            //    .then(async responsed => {
-
-
-                                            //        TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`, () => {
-                                            //            var table = document.getElementById("checkouttable")
-                                            //        })
-
-                                            //        let data = await responsed.json();
-                                            //        console.log(data);
-                                            //        var table = document.getElementById("checkouttable")
-                                            //        for (var i of data) {
-                                            //            console.log(i)
-                                            //            if (i.status == "CheckedOut") {
-                                            //                const urlParams = new URLSearchParams(window.location.search);
-                                            //                const uid = urlParams.getAll('uid');
-                                            //                table.append(createTableElement(i,"Return" ,(ev) => {
-                                            //                    console.log(ev,i.equipmentId);
-                                                                
-                                            //                    fetch(`./api/Inventory/return`, {
-                                            //                        method: "POST",
-                                            //                        headers: {
-                                            //                            "Content-Type": "application/json"
-                                            //                        },
-                                            //                        body: JSON.stringify({
-                                            //                            "equipmentId": parseInt(ev.target.getAttribute("data-id")),
-                                            //                            "employeeId": parseInt(uid)
-                                            //                        })
-                                            //                    })
-                                            //                        .then(async responsed => {
-                                            //                            console.log(responsed)
-                                            //                            fetch(`./api/Equipment/GetAll`, { method: "GET" })
-                                            //                                .then(async responsed => { 
-                                                                               
-                                            //                                })
-                                            //                    })
-                                            //                }))
-                                            //            }
-                                            //        }
-
-                                            //    })
+                                           
                                         }, 200)
                                     })
 
                                 })
                         })
+                        invbutton.addEventListener("click", () => {
 
+                            fetch('./templates/inventory.html')
+                                .then(async responses => {
+                                    NewLocation(maincont, await responses.text(), () => {
+                                        setTimeout(() => {
+                                            console.log("ok")
+                                            TabelInvElementsBuild("./templates/inventory.html","#maincont")
+                                            //TabelElementsBuild("./templates/inventory.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                            //    var table = document.getElementById("checkouttable")
+                                            //})
+
+                                        }, 200)
+                                    })
+
+                                })
+                        })
+                        reportsbutton.addEventListener("click", () => {
+                            setTimeout(() => {
+
+                            },300)
+                            fetch('./templates/report.html')
+                                .then(async responses => {
+                                    NewLocation(maincont, await responses.text(), () => {
+                                        setTimeout(() => {
+                                            fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
+                                                .then(async responses => {
+                                                    let data = await responses.json();
+                                                    //for (var [i, item] of Object.entries(data)) {
+                                                    //    console.log(i, item)
+                                                    //    chartcomp.addMonths(item.month)
+                                                    //    chartcomp.addData(item.count)
+                                                    //}
+
+                                                    //console.log(checkoutbutton)
+                                                    const ctx = document.getElementById('myChart');
+                                                    if (ctx) {
+                                                        console.log(chartcomp.getMonths(), chartcomp.getData())
+                                                        new Chart(ctx, {
+                                                            type: 'line',
+                                                            data: {
+                                                                labels: chartcomp.getMonths(),
+                                                                datasets: [{
+                                                                    label: 'Number of Checkouts',
+                                                                    data: chartcomp.getData(),
+                                                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                                                    tension: 0.3, // smooth curves
+                                                                    fill: true,
+                                                                    pointRadius: 5,
+                                                                    pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                                                                }]
+                                                            },
+                                                            options: {
+                                                                responsive: false,
+                                                                plugins: {
+                                                                    title: {
+                                                                        display: true,
+                                                                        text: 'Tool Checked Out per Month'
+                                                                    }
+                                                                },
+                                                                scales: {
+                                                                    y: {
+                                                                        beginAtZero: true,
+                                                                        title: { display: true, text: 'Checked Out' }
+                                                                    },
+                                                                    x: {
+                                                                        title: { display: true, text: 'Month' }
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+
+                                                })
+                                            //const ctx = document.getElementById('circlegraph').getContext('2d');
+                                            //const myPieChart = new Chart(ctx, {
+                                            //    type: 'pie',
+                                            //    data: {
+                                            //        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                                            //        datasets: [{
+                                            //            label: 'Example Data',
+                                            //            data: [12, 19, 3, 5, 2, 3],
+                                            //            backgroundColor: [
+                                            //                'rgba(255, 99, 132, 0.2)',
+                                            //                'rgba(54, 162, 235, 0.2)',
+                                            //                'rgba(255, 206, 86, 0.2)',
+                                            //                'rgba(75, 192, 192, 0.2)',
+                                            //                'rgba(153, 102, 255, 0.2)',
+                                            //                'rgba(255, 159, 64, 0.2)'
+                                            //            ],
+                                            //            borderColor: [
+                                            //                'rgba(255, 99, 132, 1)',
+                                            //                'rgba(54, 162, 235, 1)',
+                                            //                'rgba(255, 206, 86, 1)',
+                                            //                'rgba(75, 192, 192, 1)',
+                                            //                'rgba(153, 102, 255, 1)',
+                                            //                'rgba(255, 159, 64, 1)'
+                                            //            ],
+                                            //            borderWidth: 1
+                                            //        }]
+                                            //    },
+                                            //    options: {
+                                            //        responsive: true,
+                                            //        plugins: {
+                                            //            legend: {
+                                            //                position: 'top',
+                                            //            },
+                                            //            title: {
+                                            //                display: true,
+                                            //                text: 'Pie Chart Example'
+                                            //            }
+                                            //        }
+                                            //    }
+                                            //});
+                                        },300)
+                                       
+                                        //setTimeout(() => {
+                                        //    console.log("ok")
+                                        //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                        //        var table = document.getElementById("checkouttable")
+                                        //    })
+
+                                        //}, 200)
+                                    })
+
+                                })
+                        })
                         fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
                             .then(async responses => {
                                 let data = await responses.json();
@@ -227,6 +314,7 @@ async function load() {
                         Nav("#navSelections");
                     }, 300)
 
+                })
                 })
         } catch (ex) {
             console.log("kkkkk")
