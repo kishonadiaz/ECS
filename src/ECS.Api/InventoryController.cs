@@ -3,6 +3,7 @@ using ECS.Contracts.Requests;
 using Microsoft.AspNetCore.Mvc;
 using ECS.Core.Entities;
 using ECS.Infrastructure.InMemory;
+using System.Diagnostics;
 
 namespace ECS.Api.Controllers
 {
@@ -16,6 +17,9 @@ namespace ECS.Api.Controllers
         [HttpPost("checkout")]
         public async Task<IActionResult> Checkout([FromBody] CheckoutRequest request)
         {
+            Debug.WriteLine(request.EmployeeId);
+            Debug.WriteLine("Above");
+
             // TODO: Save activity logs in the database so we can review who did what in tokens
             await _inventory.CheckoutAsync(request);
             return Ok();

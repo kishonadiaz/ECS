@@ -20,6 +20,7 @@
             width: 10%;
             list-style-type: none;
             position: relative;
+            display:none;
         }
 
             #drawer ul {
@@ -57,14 +58,20 @@
         #drawer li:active {
             background: darkgrey;
         }
-
-
+        #nav{
+            display:none;
+        }
+        .open{
+            display:block!important;
+        }
         main {
             float: right;
             width: 75%; /* fits alongside drawer */
             padding: 10px;
             display: flex;
             flex-direction: column;
+            /* height: 100%; */
+            overflow:auto;
         }
 
         .chart-container {
@@ -86,15 +93,10 @@
         }
     </style>
     <script src="js/chartJS/chart.umd.js"></script>
-    <script >
-        let checkoutaction = (ev) => {
-    console.log(ev)
-}
-
-    </script>
+    <script src="./js/dash.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
+    <nav id="nav" class="navbar navbar-dark bg-dark">
         -->
         <div class="container-fluid">
             <a class="navbar-brand">ECS</a>
@@ -109,15 +111,16 @@
             <li><span data-action="dash">Dash</span></li>
             <li><span data-action="checkout">Checkouts</span></li>
             <li><span data-action="return">Returns</span></li>
+            <li><span data-action="inventory">Inventory</span></li>
+            <li id="reportedUI" ><span data-action="report">Reports</span></li>
             <li><span data-action="logout">Log Out</span></li>
         </ul>
     </div>
-    <main id="maincont">
+    <main id="maincont" >
 
     </main>
-    
     <script type="module" src="js/dashload.js"></script>
-
+    
     <script src="./js/bootstrap.min.js"></script>
 </body>
 </html>

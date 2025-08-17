@@ -7,6 +7,4 @@ public interface IInventoryService
     Task RequestEquipmentAync(RequestEquipment request);
 
     Task SetAvailabilityAsync(int equipmentId, SetAvailabilityRequest request);
-
-    //Task ListAsync();
 }
