@@ -1,21 +1,6 @@
 ﻿import { ChartComp } from "./chartcomponent.js"
 import { TabelElementsBuild, TabelInvElementsBuild } from "./tableactions.js"
-
-//import { run } from "../main.js"
-//console.log(run)
-
-//export class Running {
-//    constructor() {
-//        this.passing = () => { }
-//    }
-
-//    add = (vars = {}, callback = () => { }) => {
-//        this.passing = callback();
-//    }
-//    get update(){
-//        return this.passing
-//    }
-//}
+import { ByMonthGraph, BuildEmpSelect, ByBarGraph } from "./reportcomponent.js"
 
 /*
 
@@ -26,27 +11,7 @@ TODO ChartJs has to go in its own component
     NewLocation takes the element that is being passed and sets the innner html from the reponse used in Button calls to change the dashboard layout from the dash template buttons
 
 */
-//function createTableElement(thtext, tdtext,btnval, ev = () => { }) {
-//    let tr = document.createElement("tr");
-//    let th = document.createElement("th");
-//    th.setAttribute("scope", "row")
-//    th.innerHTML = thtext;
-//    let td = document.createElement("td");
-//    td.innerHTML = tdtext
-//    let tdbtn = document.createElement("td");
-//    let button = document.createElement("button")
-//    button.className = "btn btn-primary";
-//    button.type = "button"
-//    button.innerHTML = btnval
-//    tdbtn.appendChild(button);
-//    tr.append(th)
-//    tr.append(td)
-//    tr.append(tdbtn)
 
-//    tdbtn.addEventListener("click",ev)
-//    return tr;
-
-//}
 function createTableElement(element, btnval, ev = () => { }) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
@@ -92,7 +57,7 @@ function clickaction(ev) {
     let maincont = document.querySelector("#maincont")
     const urlParams = new URLSearchParams(window.location.search);
     const uid = urlParams.getAll('uid');
-    let chartcomp = new ChartComp();
+   
     let elem = ev.target
     let emp = undefined;
     if (elem) {
@@ -128,24 +93,7 @@ function clickaction(ev) {
                                 TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`, "Available", () => {
                                     var table = document.getElementById("checkouttable")
                                 })
-                                //fetch(`./api/Equipment/GetAll`, { method: "GET" })
-                                //    .then(async responsed => {
-
-
-                                //        let data = await responsed.json();
-                                //        console.log(data);
-                                //        var table = document.getElementById("checkouttable")
-                                //        for (var i of data) {
-                                //            console.log(i)
-                                //            if (i.status == "Available") {
-                                //                table.append(createTableElement(i.equipmentId, i.name,"Checkout" ,(ev) => {
-                                //                    console.log(ev);
-                                //                }))
-                                //            }
-                                //        }
-
-
-                                //    })
+                               
                             }, 200)
                             
                         }, 300)
@@ -211,56 +159,20 @@ function clickaction(ev) {
                                     .then(async responses => {
                                         NewLocation(maincont, await responses.text(), () => {
                                             setTimeout(() => {
-                                                fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
-                                                    .then(async responses => {
-                                                        let data = await responses.json();
-                                                        for (var [i, item] of Object.entries(data)) {
-                                                            console.log(i, item)
-                                                            chartcomp.addMonths(item.month)
-                                                            chartcomp.addData(item.count)
-                                                        }
 
-                                                        //console.log(checkoutbutton)
-                                                        const ctx = document.getElementById('myChart');
-                                                        if (ctx) {
-                                                            //console.log(chartcomp.getMonths(), chartcomp.getData())
-                                                            new Chart(ctx, {
-                                                                type: 'line',
-                                                                data: {
-                                                                    labels: chartcomp.getMonths(),
-                                                                    datasets: [{
-                                                                        label: 'Number of Checkouts',
-                                                                        data: chartcomp.getData(),
-                                                                        borderColor: 'rgba(75, 192, 192, 1)',
-                                                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                                                        tension: 0.3, // smooth curves
-                                                                        fill: true,
-                                                                        pointRadius: 5,
-                                                                        pointBackgroundColor: 'rgba(75, 192, 192, 1)'
-                                                                    }]
-                                                                },
-                                                                options: {
-                                                                    responsive: false,
-                                                                    plugins: {
-                                                                        title: {
-                                                                            display: true,
-                                                                            text: 'Tool Checked Out per Month'
-                                                                        }
-                                                                    },
-                                                                    scales: {
-                                                                        y: {
-                                                                            beginAtZero: true,
-                                                                            title: { display: true, text: 'Checked Out' }
-                                                                        },
-                                                                        x: {
-                                                                            title: { display: true, text: 'Month' }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
+                                                BuildEmpSelect((select) => {
+                                                    const selectedIndex = select.selectedIndex;
+                                                    const selectedText = select.options[selectedIndex].text;
+                                                    const selectedValue = select.options[selectedIndex].value;
 
-                                                    })
+                                                    console.log(selectedText, selectedValue)
+                                                    if (selectedValue != "default") {
+                                                        ByMonthGraph(selectedValue, true);
+                                                        ByBarGraph(selectedValue, true);
+                                                    }
+                                                });
+                                                //ByMonthGraph(uid, true);
+                                                
                                                 //const ctx = document.getElementById('circlegraph').getContext('2d');
                                                 //const myPieChart = new Chart(ctx, {
                                                 //    type: 'pie',
@@ -343,7 +255,7 @@ function clickaction(ev) {
                         setTimeout(() => {
                             const urlParams = new URLSearchParams(window.location.search);
                             const uid = urlParams.getAll('uid');
-                            let chartcomp = new ChartComp();
+                           
                             maincont.innerHTML = d.innerHTML
                             if (emp.role != "Manager") {
                                 document.getElementById("reportedUI").style.display = "none";
@@ -405,56 +317,19 @@ function clickaction(ev) {
                                                 .then(async responses => {
                                                     NewLocation(maincont, await responses.text(), () => {
                                                         setTimeout(() => {
-                                                            fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
-                                                                .then(async responses => {
-                                                                    let data = await responses.json();
-                                                                    //for (var [i, item] of Object.entries(data)) {
-                                                                    //    console.log(i, item)
-                                                                    //    chartcomp.addMonths(item.month)
-                                                                    //    chartcomp.addData(item.count)
-                                                                    //}
 
-                                                                    //console.log(checkoutbutton)
-                                                                    const ctx = document.getElementById('myChart');
-                                                                    if (ctx) {
-                                                                        console.log(chartcomp.getMonths(), chartcomp.getData())
-                                                                        new Chart(ctx, {
-                                                                            type: 'line',
-                                                                            data: {
-                                                                                labels: chartcomp.getMonths(),
-                                                                                datasets: [{
-                                                                                    label: 'Number of Checkouts',
-                                                                                    data: chartcomp.getData(),
-                                                                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                                                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                                                                    tension: 0.3, // smooth curves
-                                                                                    fill: true,
-                                                                                    pointRadius: 5,
-                                                                                    pointBackgroundColor: 'rgba(75, 192, 192, 1)'
-                                                                                }]
-                                                                            },
-                                                                            options: {
-                                                                                responsive: false,
-                                                                                plugins: {
-                                                                                    title: {
-                                                                                        display: true,
-                                                                                        text: 'Tool Checked Out per Month'
-                                                                                    }
-                                                                                },
-                                                                                scales: {
-                                                                                    y: {
-                                                                                        beginAtZero: true,
-                                                                                        title: { display: true, text: 'Checked Out' }
-                                                                                    },
-                                                                                    x: {
-                                                                                        title: { display: true, text: 'Month' }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        });
-                                                                    }
+                                                            BuildEmpSelect((select) => {
+                                                                const selectedIndex = select.selectedIndex;
+                                                                const selectedText = select.options[selectedIndex].text;
+                                                                const selectedValue = select.options[selectedIndex].value;
 
-                                                                })
+                                                                console.log(selectedText, selectedValue)
+                                                                if (selectedValue != "default") {
+                                                                    ByMonthGraph(selectedValue, true);
+                                                                    ByBarGraph(selectedValue, true);
+                                                                }
+                                                            });
+                                                          
                                                             //const ctx = document.getElementById('circlegraph').getContext('2d');
                                                             //const myPieChart = new Chart(ctx, {
                                                             //    type: 'pie',
@@ -518,57 +393,57 @@ function clickaction(ev) {
 
                                     })
                             })
-                            fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
-                                .then(async responses => {
-                                    let data = await responses.json();
-                                    for (var [i, item] of Object.entries(data)) {
-                                        console.log(i, item)
-                                        chartcomp.addMonths(item.month)
-                                        chartcomp.addData(item.count)
-                                    }
+                            //fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
+                            //    .then(async responses => {
+                            //        let data = await responses.json();
+                            //        for (var [i, item] of Object.entries(data)) {
+                            //            console.log(i, item)
+                            //            chartcomp.addMonths(item.month)
+                            //            chartcomp.addData(item.count)
+                            //        }
 
-                                    //console.log(checkoutbutton)
-                                    const ctx = document.getElementById('myChart');
-                                    if (ctx) {
-                                        console.log(chartcomp.getMonths(), chartcomp.getData())
-                                        new Chart(ctx, {
-                                            type: 'line',
-                                            data: {
-                                                labels: chartcomp.getMonths(),
-                                                datasets: [{
-                                                    label: 'Number of Checkouts',
-                                                    data: chartcomp.getData(),
-                                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                                    tension: 0.3, // smooth curves
-                                                    fill: true,
-                                                    pointRadius: 5,
-                                                    pointBackgroundColor: 'rgba(75, 192, 192, 1)'
-                                                }]
-                                            },
-                                            options: {
-                                                responsive: false,
-                                                plugins: {
-                                                    title: {
-                                                        display: true,
-                                                        text: 'Tool Checked Out per Month'
-                                                    }
-                                                },
-                                                scales: {
-                                                    y: {
-                                                        beginAtZero: true,
-                                                        title: { display: true, text: 'Checked Out' }
-                                                    },
-                                                    x: {
-                                                        title: { display: true, text: 'Month' }
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
+                            //        //console.log(checkoutbutton)
+                            //        const ctx = document.getElementById('myChart');
+                            //        if (ctx) {
+                            //            console.log(chartcomp.getMonths(), chartcomp.getData())
+                            //            new Chart(ctx, {
+                            //                type: 'line',
+                            //                data: {
+                            //                    labels: chartcomp.getMonths(),
+                            //                    datasets: [{
+                            //                        label: 'Number of Checkouts',
+                            //                        data: chartcomp.getData(),
+                            //                        borderColor: 'rgba(75, 192, 192, 1)',
+                            //                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            //                        tension: 0.3, // smooth curves
+                            //                        fill: true,
+                            //                        pointRadius: 5,
+                            //                        pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                            //                    }]
+                            //                },
+                            //                options: {
+                            //                    responsive: false,
+                            //                    plugins: {
+                            //                        title: {
+                            //                            display: true,
+                            //                            text: 'Tool Checked Out per Month'
+                            //                        }
+                            //                    },
+                            //                    scales: {
+                            //                        y: {
+                            //                            beginAtZero: true,
+                            //                            title: { display: true, text: 'Checked Out' }
+                            //                        },
+                            //                        x: {
+                            //                            title: { display: true, text: 'Month' }
+                            //                        }
+                            //                    }
+                            //                }
+                            //            });
+                            //        }
 
-                                })
-
+                            //    })
+                            ByMonthGraph(uid,true);
                             //Nav("#navSelections");
                         }, 300)
 

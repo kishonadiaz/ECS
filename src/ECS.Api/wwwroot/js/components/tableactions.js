@@ -61,6 +61,37 @@ function createTableInvElement(element, callback = () => { }) {
 
 }
 
+function createTableReportElement(element, callback = () => { }) {
+    let tr = document.createElement("tr");
+    let th = document.createElement("th");
+    th.setAttribute("scope", "row")
+    th.innerHTML = element.equipmentId;
+    let td = document.createElement("td");
+    td.innerHTML = element.name
+    let tdstat = document.createElement("td");
+    tdstat.innerHTML = element.status
+    let tdCdate = document.createElement("td");
+    console.log(element);
+    tdCdate.innerHTML = (element.checkoutDate == null) ? "Not Checkout" : DateFormatter(new Date(element.checkoutDate));
+    let tdRdate = document.createElement("td");
+    tdRdate.innerHTML = (element.returnDueDate == null) ? "Not Checkout" : DateFormatter(new Date(element.returnDueDate));
+
+    let tdAEmp = document.createElement("td");
+    tdAEmp.innerHTML = (element.assignedEmployeeId == null) ? "Not Checkout" : element.assignedEmployeeId;
+
+    tr.append(th)
+    tr.append(td)
+    tr.append(tdstat)
+    tr.append(tdCdate)
+    tr.append(tdRdate)
+    tr.append(tdAEmp)
+
+    callback();
+    return tr;
+
+}
+
+
 export function TabelElementsBuild(whereTemplate, elem, what, status, callback = () => { }) {
     let btntext = "";
     const urlParams = new URLSearchParams(window.location.search);
