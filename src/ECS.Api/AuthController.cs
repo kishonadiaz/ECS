@@ -2,29 +2,38 @@ using ECS.Core.Services;
 using ECS.Contracts.Requests;
 using ECS.Contracts.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting; // for IHostEnvironment and IsDevelopment
 
-namespace ECS.Api.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+namespace ECS.Api.Controllers
 {
-    private readonly IAuthService _auth;
-    public AuthController(IAuthService auth) => _auth = auth;
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
-        => Ok(new TokenResponse { Token = await _auth.LoginAsync(request) });
-
-    [HttpGet("login")]
-    public async Task<IActionResult> LoginRestfully([FromQuery] LoginRequest request)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        // Logic to retrieve user by ID
-        var token = await _auth.LoginAsync(request);
+        private readonly IAuthService _auth;
+        private readonly IHostEnvironment _env;
 
-        if (string.IsNullOrEmpty(token))
-            return Unauthorized(new { message = "Invalid username or password" });
+        // Constructor takes both services
+        public AuthController(IAuthService auth, IHostEnvironment env)
+        {
+            _auth = auth;
+            _env = env;
+        }
 
-        return Ok(new TokenResponse { Token = token });
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            try
+            {
+                var token = await _auth.LoginAsync(request);
+                return Ok(new TokenResponse { Token = token });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Show the exact message only in Development
+                var message = _env.IsDevelopment() ? ex.Message : "Invalid credentials";
+                return Unauthorized(new { message });
+            }
+        }
     }
 }
