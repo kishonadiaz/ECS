@@ -73,171 +73,174 @@ async function load() {
                     emp = await responses.json()
 
                     console.log(emp);
-                    
+                    if (emp.role == "Manager") {
 
-            fetch('./templates/dash.html')
-                .then(async response => {
-                    let html = await response.text()
-                    let maincont = document.querySelector("#maincont")
-                    let nav = document.querySelector("#nav")
-                    let drawer = document.querySelector("#drawer")
-                    let chartcontainer = document.querySelector("#chart-container")
-                    console.log(nav)
-                    if(nav)
-                        nav.classList.add("open")
-                    if (drawer)
-                        drawer.classList.add("open")
-                   
-                    //drawer.classList.add("open")
+                    } else {
+
+                        fetch('./templates/dash.html')
+                            .then(async response => {
+                                let html = await response.text()
+                                let maincont = document.querySelector("#maincont")
+                                let nav = document.querySelector("#nav")
+                                let drawer = document.querySelector("#drawer")
+                                let chartcontainer = document.querySelector("#chart-container")
+                                console.log(nav)
+                                if (nav)
+                                    nav.classList.add("open")
+                                if (drawer)
+                                    drawer.classList.add("open")
+
+                                //drawer.classList.add("open")
 
 
-                    //console.log(html);
-                    let d = document.createElement("div");
-                    d.innerHTML = html;
+                                //console.log(html);
+                                let d = document.createElement("div");
+                                d.innerHTML = html;
 
-                    //const parser = new DOMParser();
-                    //const doc = parser.parseFromString(html, 'text/html');
-                    //console.log(doc)
-                    
-                    setTimeout(() => {
-                        
-                       
-                        maincont.innerHTML = d.innerHTML
-                        if (emp.role != "Manager") {
-                            document.getElementById("reportedUI").style.display = "none";
-                            document.getElementById("reports").style.display = "none";
-                        }
-                        let checkoutbutton = document.querySelector("#checkoutbtn")
-                        let returnbutton = document.querySelector("#returnbtn")
-                        let invbutton = document.querySelector("#inventory")
-                        let reportsbutton = document.querySelector("#reports")
-                        checkoutbutton.addEventListener("click", () => {
-                           
-                            TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`,"Available", () => {
-                                var table = document.getElementById("checkouttable")
-                            })
-                        })
-                        returnbutton.addEventListener("click", () => {
-                            
-                            fetch('./templates/returns.html')
-                                .then(async responses => {
-                                    NewLocation(maincont, await responses.text(), () => {
-                                        setTimeout(() => {
-                                            console.log("ok")
-                                            TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`,"CheckedOut", () => {
-                                                var table = document.getElementById("checkouttable")
+                                //const parser = new DOMParser();
+                                //const doc = parser.parseFromString(html, 'text/html');
+                                //console.log(doc)
+
+                                setTimeout(() => {
+
+
+                                    maincont.innerHTML = d.innerHTML
+                                    if (emp.role != "Manager") {
+                                        document.getElementById("reportedUI").style.display = "none";
+                                        document.getElementById("reports").style.display = "none";
+                                    }
+                                    let checkoutbutton = document.querySelector("#checkoutbtn")
+                                    let returnbutton = document.querySelector("#returnbtn")
+                                    let invbutton = document.querySelector("#inventory")
+                                    let reportsbutton = document.querySelector("#reports")
+                                    checkoutbutton.addEventListener("click", () => {
+
+                                        TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`, "Available", () => {
+                                            var table = document.getElementById("checkouttable")
+                                        })
+                                    })
+                                    returnbutton.addEventListener("click", () => {
+
+                                        fetch('./templates/returns.html')
+                                            .then(async responses => {
+                                                NewLocation(maincont, await responses.text(), () => {
+                                                    setTimeout(() => {
+                                                        console.log("ok")
+                                                        TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                                            var table = document.getElementById("checkouttable")
+                                                        })
+
+                                                    }, 200)
+                                                })
+
                                             })
-                                           
-                                        }, 200)
                                     })
+                                    invbutton.addEventListener("click", () => {
 
-                                })
-                        })
-                        invbutton.addEventListener("click", () => {
+                                        fetch('./templates/inventory.html')
+                                            .then(async responses => {
+                                                NewLocation(maincont, await responses.text(), () => {
+                                                    setTimeout(() => {
+                                                        console.log("ok")
+                                                        TabelInvElementsBuild("./templates/inventory.html", "#maincont")
 
-                            fetch('./templates/inventory.html')
-                                .then(async responses => {
-                                    NewLocation(maincont, await responses.text(), () => {
-                                        setTimeout(() => {
-                                            console.log("ok")
-                                            TabelInvElementsBuild("./templates/inventory.html","#maincont")
-                                           
 
-                                        }, 200)
+                                                    }, 200)
+                                                })
+
+                                            })
                                     })
-
-                                })
-                        })
-                        reportsbutton.addEventListener("click", () => {
-                            setTimeout(() => {
-
-                            },300)
-                            fetch('./templates/report.html')
-                                .then(async responses => {
-                                    NewLocation(maincont, await responses.text(), () => {
+                                    reportsbutton.addEventListener("click", () => {
                                         setTimeout(() => {
-                                            let drawer = document.querySelector("#drawer")
-                                            
-                                            BuildEmpSelect((select) => {
-                                                const selectedIndex = select.selectedIndex;
-                                                const selectedText = select.options[selectedIndex].text;
-                                                const selectedValue = select.options[selectedIndex].value;
 
-                                                console.log(selectedText, selectedValue)
-                                                if (selectedValue != "default") {
-                                                    ByMonthGraph(selectedValue, true);
-                                                    ByBarGraph(selectedValue, true);
-                                                }
-                                            });
-                                            
-                                            //const ctx = document.getElementById('circlegraph').getContext('2d');
-                                            //const myPieChart = new Chart(ctx, {
-                                            //    type: 'pie',
-                                            //    data: {
-                                            //        labels: ['Data' ],
-                                            //        //labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                                            //        datasets: [{
-                                            //            label: 'Example Data',
-                                            //            data: [12, 1, 0, 0, 0, 0],
-                                            //            backgroundColor: [
-                                            //                'rgba(255, 99, 132, 0.2)',
-                                            //                'rgba(54, 162, 235, 0.2)',
-                                            //                'rgba(255, 206, 86, 0.2)',
-                                            //                'rgba(75, 192, 192, 0.2)',
-                                            //                'rgba(153, 102, 255, 0.2)',
-                                            //                'rgba(255, 159, 64, 0.2)'
-                                            //            ],
-                                            //            borderColor: [
-                                            //                'rgba(255, 99, 132, 1)',
-                                            //                'rgba(54, 162, 235, 1)',
-                                            //                'rgba(255, 206, 86, 1)',
-                                            //                'rgba(75, 192, 192, 1)',
-                                            //                'rgba(153, 102, 255, 1)',
-                                            //                'rgba(255, 159, 64, 1)'
-                                            //            ],
-                                            //            borderWidth: 1
-                                            //        }]
-                                            //    },
-                                            //    options: {
-                                            //        responsive: true,
-                                            //        plugins: {
-                                            //            legend: {
-                                            //                position: 'top',
-                                            //            },
-                                            //            title: {
-                                            //                display: true,
-                                            //                text: 'Pie Chart Example'
-                                            //            }
-                                            //        }
-                                            //    }
-                                            //});
                                         }, 300)
-                                        let chartcontainer = document.querySelector(".chart-container")
-                                        let contrectHeight = chartcontainer.getBoundingClientRect().height
-                                        console.log(contrectHeight)
-                                        drawer.style.height = ""+contrectHeight*2+"px"
-                                        //setTimeout(() => {
-                                        //    console.log("ok")
-                                        //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
-                                        //        var table = document.getElementById("checkouttable")
-                                        //    })
+                                        fetch('./templates/report.html')
+                                            .then(async responses => {
+                                                NewLocation(maincont, await responses.text(), () => {
+                                                    setTimeout(() => {
+                                                        let drawer = document.querySelector("#drawer")
 
-                                        //}, 200)
+                                                        BuildEmpSelect((select) => {
+                                                            const selectedIndex = select.selectedIndex;
+                                                            const selectedText = select.options[selectedIndex].text;
+                                                            const selectedValue = select.options[selectedIndex].value;
+
+                                                            console.log(selectedText, selectedValue)
+                                                            if (selectedValue != "default") {
+                                                                ByMonthGraph(selectedValue, true);
+                                                                ByBarGraph(selectedValue, true);
+                                                            }
+                                                        });
+
+                                                        //const ctx = document.getElementById('circlegraph').getContext('2d');
+                                                        //const myPieChart = new Chart(ctx, {
+                                                        //    type: 'pie',
+                                                        //    data: {
+                                                        //        labels: ['Data' ],
+                                                        //        //labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                                                        //        datasets: [{
+                                                        //            label: 'Example Data',
+                                                        //            data: [12, 1, 0, 0, 0, 0],
+                                                        //            backgroundColor: [
+                                                        //                'rgba(255, 99, 132, 0.2)',
+                                                        //                'rgba(54, 162, 235, 0.2)',
+                                                        //                'rgba(255, 206, 86, 0.2)',
+                                                        //                'rgba(75, 192, 192, 0.2)',
+                                                        //                'rgba(153, 102, 255, 0.2)',
+                                                        //                'rgba(255, 159, 64, 0.2)'
+                                                        //            ],
+                                                        //            borderColor: [
+                                                        //                'rgba(255, 99, 132, 1)',
+                                                        //                'rgba(54, 162, 235, 1)',
+                                                        //                'rgba(255, 206, 86, 1)',
+                                                        //                'rgba(75, 192, 192, 1)',
+                                                        //                'rgba(153, 102, 255, 1)',
+                                                        //                'rgba(255, 159, 64, 1)'
+                                                        //            ],
+                                                        //            borderWidth: 1
+                                                        //        }]
+                                                        //    },
+                                                        //    options: {
+                                                        //        responsive: true,
+                                                        //        plugins: {
+                                                        //            legend: {
+                                                        //                position: 'top',
+                                                        //            },
+                                                        //            title: {
+                                                        //                display: true,
+                                                        //                text: 'Pie Chart Example'
+                                                        //            }
+                                                        //        }
+                                                        //    }
+                                                        //});
+                                                    }, 300)
+                                                    let chartcontainer = document.querySelector(".chart-container")
+                                                    let contrectHeight = chartcontainer.getBoundingClientRect().height
+                                                    console.log(contrectHeight)
+                                                    drawer.style.height = "" + contrectHeight * 2 + "px"
+                                                    //setTimeout(() => {
+                                                    //    console.log("ok")
+                                                    //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
+                                                    //        var table = document.getElementById("checkouttable")
+                                                    //    })
+
+                                                    //}, 200)
+                                                })
+
+                                            })
                                     })
 
-                                })
-                        })
 
-                        
-                        ByMonthGraph(uid);
-                        
+                                    ByMonthGraph(uid);
 
 
-                       
-                        Nav("#navSelections");
-                    }, 300)
 
-                })
+
+                                    Nav("#navSelections");
+                                }, 300)
+
+                            })
+                    }
                 })
         } catch (ex) {
             console.log("kkkkk")

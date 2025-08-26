@@ -10,7 +10,7 @@
             margin: 0;
         }
 
-        #drawer {
+        #drawer, #drawerManger {
             background: grey;
             color: whitesmoke;
             display: inline-block;
@@ -23,7 +23,11 @@
             display:none;
         }
 
-            #drawer ul {
+       
+
+
+
+            #drawer ul, #drawerManger ul {
                 position: absolute;
                 padding: 0;
                 left: 0;
@@ -31,7 +35,7 @@
                 margin: auto;
             }
 
-            #drawer li {
+            #drawer li, #drawerManger li {
                 list-style-type: none;
                 cursor: pointer;
                 padding: 10px;
@@ -41,7 +45,7 @@
                 text-decoration: none;
             }
 
-            #drawer span {
+            #drawer span, #drawerManger span {
                 user-select: none;
                 pointer-events: none;
             }
@@ -51,11 +55,11 @@
             color: white;
         }
 
-        #drawer li:hover {
+        #drawer li:hover, #drawerManger li:hover {
             background: lightgrey;
         }
 
-        #drawer li:active {
+        #drawer li:active, #drawerManger  li:active{
             background: darkgrey;
         }
         #nav{
@@ -106,21 +110,31 @@
             <!-- </form> -->
         </div>
     </nav>
+    <div id="drawerManger">
+        <ul id="navSelections">
+            <!-- <li><span data-action="dash">Dash</span></li>
+            <li><span data-action="checkout">Checkouts</span></li>
+            <li><span data-action="return">Returns</span></li>
+            <li><span data-action="inventory">Inventory</span></li>
+            <li id="reportedUI"><span data-action="report">Reports</span></li> -->
+            <li><span data-action="logout">Log Out</span></li>
+        </ul>
+    </div>
     <div id="drawer">
         <ul id="navSelections">
             <li><span data-action="dash">Dash</span></li>
             <li><span data-action="checkout">Checkouts</span></li>
             <li><span data-action="return">Returns</span></li>
             <li><span data-action="inventory">Inventory</span></li>
-            <li id="reportedUI" ><span data-action="report">Reports</span></li>
+            <li id="reportedUI"><span data-action="report">Reports</span></li>
             <li><span data-action="logout">Log Out</span></li>
         </ul>
     </div>
-    <main id="maincont" >
+    <main id="maincont">
 
     </main>
     <script type="module" src="js/dashload.js"></script>
-    
+
     <script src="./js/bootstrap.min.js"></script>
 </body>
 </html>
