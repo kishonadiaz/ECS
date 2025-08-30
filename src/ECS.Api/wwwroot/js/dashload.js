@@ -13,7 +13,7 @@ function createTableElement(element, btnval, ev = () => { }) {
     let td = document.createElement("td"); // Cell for equipment name
     td.innerHTML = element.name
     let tdbtn = document.createElement("td"); // Cell for action button
-    let button = document=*/.createElement("button")
+    let button = document.createElement("button")
     button.className = "btn btn-primary"; // Bootstrap button style
     button.type = "button"
     button.innerHTML = btnval            // Button label (e.g., "Checkout")
