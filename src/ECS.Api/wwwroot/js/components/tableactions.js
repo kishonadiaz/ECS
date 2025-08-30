@@ -1,4 +1,10 @@
-﻿function createTableElement(element, btnval, ev = () => { }) {
+﻿
+/*
+    Creates a table that fills it with the data for the table that is in the dash and athe reports page
+
+*/
+
+function createTableElement(element, btnval, ev = () => { }) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
     th.setAttribute("scope", "row")
@@ -20,7 +26,9 @@
     return tr;
 
 }
-
+ /*
+    Sets the data formate for the date in the table
+ */
 function DateFormatter(date) {
     const formatter = new Intl.DateTimeFormat('en-US', {
         month: '2-digit',
@@ -30,7 +38,10 @@ function DateFormatter(date) {
     const formattedDate = formatter.format(date);
     return formattedDate;
 }
+/*
+   createTableInvElement set and creates the table data for the inventory page and fills that data with the inventory 
 
+*/
 function createTableInvElement(element, callback = () => { }) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
@@ -60,7 +71,9 @@ function createTableInvElement(element, callback = () => { }) {
     return tr;
 
 }
-
+/*
+    createTableReportElement creates and set the data for the reports pages table but this function was moved to the reports  reportcomponet.js
+*/
 function createTableReportElement(element, callback = () => { }) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
@@ -91,7 +104,10 @@ function createTableReportElement(element, callback = () => { }) {
 
 }
 
+/*
+    TableElementsBuild Builds the table in the dash and reports pages and this is what calls the other functions in the list for the table display 
 
+*/
 export function TabelElementsBuild(whereTemplate, elem, what, status, callback = () => { }) {
     let btntext = "";
     const urlParams = new URLSearchParams(window.location.search);
@@ -156,6 +172,10 @@ export function TabelElementsBuild(whereTemplate, elem, what, status, callback =
             callback()
         })
 }
+
+/*
+    TabelInvElementsBuild Builds the table fot the inventory page stes the data from the APi and displays that table in the inventory page
+*/
 export function TabelInvElementsBuild(whereTemplate, elem,  callback = () => { }) {
     let btntext = "";
     const urlParams = new URLSearchParams(window.location.search);

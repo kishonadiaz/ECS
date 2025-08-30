@@ -4,6 +4,11 @@ let chartcomp = new ChartComp();
 let bymouthchart = undefined;
 let bymouthgraph = undefined;
 
+
+/*
+    Builds the Moth Graph and fills it with the data from the checkout api
+    this is fo r the checkout table in the resports page
+*/
 export function ByMonthGraph(uid,alreadyused=false) {
     fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
         .then(async responses => {
@@ -59,6 +64,9 @@ export function ByMonthGraph(uid,alreadyused=false) {
 
         })
 }
+/*
+    For the reports page this files the Bar ggraph in the reports page and set the data for the reports in that page 
+*/
 export function ByBarGraph(uid, alreadyused = false) {
     const ctx = document.getElementById('bargraph');
     if (bymouthgraph) bymouthgraph.destroy();
@@ -99,6 +107,12 @@ export function ByBarGraph(uid, alreadyused = false) {
         }
     });
 }
+
+
+/*
+    this function Buiolds and sets the data for the select dropdown in the the reposts page to select the employee to then fill  that data with tht employee information
+
+*/
 export function BuildEmpSelect(callback = () => { }) {
     let select = document.getElementById("employeedropdown")
     fetch(`./api/debug/employees`, { method: "GET" })
@@ -112,7 +126,7 @@ export function BuildEmpSelect(callback = () => { }) {
                     options.innerHTML = items.name
                     select.append(options)
                 }
-                //select.append()
+        
             }
             
             select.addEventListener("change", () => {

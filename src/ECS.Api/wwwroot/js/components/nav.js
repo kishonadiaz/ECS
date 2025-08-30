@@ -7,11 +7,10 @@ import { ByMonthGraph, BuildEmpSelect, ByBarGraph } from "./reportcomponent.js"
 TODO ChartJs has to go in its own component
 
 */
+
 /*
-    NewLocation takes the element that is being passed and sets the innner html from the reponse used in Button calls to change the dashboard layout from the dash template buttons
-
+    Creates the Table for the graph by creating the elements to be injected into the graphs
 */
-
 function createTableElement(element, btnval, ev = () => { }) {
     let tr = document.createElement("tr");
     let th = document.createElement("th");
@@ -34,7 +33,10 @@ function createTableElement(element, btnval, ev = () => { }) {
     return tr;
 
 }
+/*
+    NewLocation takes the element that is being passed and sets the innner html from the reponse used in Button calls to change the dashboard layout from the dash template buttons
 
+*/
 export function NewLocation(element, htm, callback=()=> { }) {
     setTimeout(() => {
         element.innerHTML = htm;
@@ -53,6 +55,9 @@ export function Nav(element) {
     if(elem)
     elem.addEventListener("click",clickaction)
 }
+/*
+    clickaction is a function used in Nav to set a new click event when the Naviagtion is built when load ing a page it consistes of the links that changes the pages and the loading actions for each link when a link in the side bmenu is clicked 
+*/ 
 function clickaction(ev) {
     let maincont = document.querySelector("#maincont")
     const urlParams = new URLSearchParams(window.location.search);
@@ -60,23 +65,33 @@ function clickaction(ev) {
    
     let elem = ev.target
     let emp = undefined;
+
+    /*Checks if the the traget element is there if it is run tis code*/
     if (elem) {
         console.log(ev)
         let child = ev.target.children[0]
         if (child) {
             ev.target.children[0].click()
-            let action = child.getAttribute("data-action")
+            let action = child.getAttribute("data-action")//action checks the data attibute to see if the action is an action specified for an action
+
+            /*
+                logout sets the URL to the login page and also clears the history so pressing the back button does not display anything  
+            */
             if (action == "logout") {
                 history.pushState(null, null, location.href); // Pushes the current page to history
                 window.onpopstate = function () {
                     history.go(1); // Navigates forward if the user tries to go back
                 };
-                //let deletingAll =   history.deleteAll()
+                
                 location.replace("./loginredirect.html");
 
                 logout()
 
             } else if (action == "checkout") {
+                /*
+                    checkout sets the the checkout template page and fills its content with the data and table for checkout  
+                
+                */
                 fetch('./templates/checkout.html')
                     .then(async response => {
                         let html = await response.text()
@@ -89,7 +104,10 @@ function clickaction(ev) {
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML
                             setTimeout(() => {
-                                console.log("ok")
+                                /*
+                                    Check the Component TabelElementsBuild
+                                */
+
                                 TabelElementsBuild("./templates/checkout.html", "#maincont", `./api/Inventory/checkout`, "Available", () => {
                                     var table = document.getElementById("checkouttable")
                                 })
@@ -100,11 +118,15 @@ function clickaction(ev) {
 
                     })
             } else if (action == "return") {
+                /*
+                   return sets the the return template page and fills its content with the data and table for return  
+               
+               */
                 fetch('./templates/returns.html')
                     .then(async response => {
                         let html = await response.text()
 
-                        console.log(html);
+                        
                         let d = document.createElement("div");
                         d.innerHTML = html;
 
@@ -112,7 +134,9 @@ function clickaction(ev) {
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML
                             setTimeout(() => {
-                                console.log("ok")
+                                /*
+                                  Check the Component TabelElementsBuild
+                              */
                                 TabelElementsBuild("./templates/returns.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
                                     var table = document.getElementById("checkouttable")
                                 })
@@ -122,11 +146,13 @@ function clickaction(ev) {
 
                     })
             } else if (action == "inventory") {
+                /*
+                    inventory sets the the inventory template page and fills its content with the data and table for inventory  
+                */
                 fetch('./templates/inventory.html')
                     .then(async response => {
                         let html = await response.text()
-
-                        console.log(html);
+                        
                         let d = document.createElement("div");
                         d.innerHTML = html;
 
@@ -134,7 +160,9 @@ function clickaction(ev) {
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML
                             setTimeout(() => {
-                                console.log("ok")
+                                /*
+                                 Check the Component TabelElementsBuild
+                             */
                                 TabelInvElementsBuild("./templates/inventory.html", "#maincont")
                             }, 200)
 
@@ -142,11 +170,14 @@ function clickaction(ev) {
 
                     })
             } else if (action == "report") {
+                /*
+                    report sets the the report template page and fills its content with the data and table for report  
+                */
                 fetch('./templates/report.html')
                     .then(async response => {
                         let html = await response.text()
 
-                        console.log(html);
+                        c
                         let d = document.createElement("div");
                         d.innerHTML = html;
 
@@ -154,7 +185,9 @@ function clickaction(ev) {
                         setTimeout(() => {
                             maincont.innerHTML = d.innerHTML
                             setTimeout(() => {
-                                console.log("ok")
+                                /*
+                                    Fills the Selectbox in the reports page
+                                */
                                 fetch('./templates/report.html')
                                     .then(async responses => {
                                         NewLocation(maincont, await responses.text(), () => {
@@ -171,63 +204,14 @@ function clickaction(ev) {
                                                         ByBarGraph(selectedValue, true);
                                                     }
                                                 });
-                                                //ByMonthGraph(uid, true);
-                                                
-                                                //const ctx = document.getElementById('circlegraph').getContext('2d');
-                                                //const myPieChart = new Chart(ctx, {
-                                                //    type: 'pie',
-                                                //    data: {
-                                                //        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                                                //        datasets: [{
-                                                //            label: 'Example Data',
-                                                //            data: [12, 19, 3, 5, 2, 3],
-                                                //            backgroundColor: [
-                                                //                'rgba(255, 99, 132, 0.2)',
-                                                //                'rgba(54, 162, 235, 0.2)',
-                                                //                'rgba(255, 206, 86, 0.2)',
-                                                //                'rgba(75, 192, 192, 0.2)',
-                                                //                'rgba(153, 102, 255, 0.2)',
-                                                //                'rgba(255, 159, 64, 0.2)'
-                                                //            ],
-                                                //            borderColor: [
-                                                //                'rgba(255, 99, 132, 1)',
-                                                //                'rgba(54, 162, 235, 1)',
-                                                //                'rgba(255, 206, 86, 1)',
-                                                //                'rgba(75, 192, 192, 1)',
-                                                //                'rgba(153, 102, 255, 1)',
-                                                //                'rgba(255, 159, 64, 1)'
-                                                //            ],
-                                                //            borderWidth: 1
-                                                //        }]
-                                                //    },
-                                                //    options: {
-                                                //        responsive: true,
-                                                //        plugins: {
-                                                //            legend: {
-                                                //                position: 'top',
-                                                //            },
-                                                //            title: {
-                                                //                display: true,
-                                                //                text: 'Pie Chart Example'
-                                                //            }
-                                                //        }
-                                                //    }
-                                                //});
+                                              
                                             }, 300)
 
-                                            //setTimeout(() => {
-                                            //    console.log("ok")
-                                            //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
-                                            //        var table = document.getElementById("checkouttable")
-                                            //    })
-
-                                            //}, 200)
+                                         
                                         })
 
                                     })
-                                //TabelElementsBuild("./templates/reor.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
-                                //    var table = document.getElementById("checkouttable")
-                                //})
+                              
                             }, 200)
 
                         }, 300)
@@ -237,11 +221,17 @@ function clickaction(ev) {
 
 
             else if (action == "dash") {
+                /*
+                    Gets the Employee using the UId in the URL
+                
+                */
                 fetch(`/api/Employees/${uid}`, { method: "GET" })
                     .then(async responses => {
                         emp = await responses.json()
 
-                        //console.log(emp);
+                        /*
+                            Get ths dash  and fils the data of table and sets the buttons data
+                        */
                     
                 fetch('./templates/dash.html')
                     .then(async response => {
@@ -330,121 +320,21 @@ function clickaction(ev) {
                                                                 }
                                                             });
                                                           
-                                                            //const ctx = document.getElementById('circlegraph').getContext('2d');
-                                                            //const myPieChart = new Chart(ctx, {
-                                                            //    type: 'pie',
-                                                            //    data: {
-                                                            //        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                                                            //        datasets: [{
-                                                            //            label: 'Example Data',
-                                                            //            data: [12, 19, 3, 5, 2, 3],
-                                                            //            backgroundColor: [
-                                                            //                'rgba(255, 99, 132, 0.2)',
-                                                            //                'rgba(54, 162, 235, 0.2)',
-                                                            //                'rgba(255, 206, 86, 0.2)',
-                                                            //                'rgba(75, 192, 192, 0.2)',
-                                                            //                'rgba(153, 102, 255, 0.2)',
-                                                            //                'rgba(255, 159, 64, 0.2)'
-                                                            //            ],
-                                                            //            borderColor: [
-                                                            //                'rgba(255, 99, 132, 1)',
-                                                            //                'rgba(54, 162, 235, 1)',
-                                                            //                'rgba(255, 206, 86, 1)',
-                                                            //                'rgba(75, 192, 192, 1)',
-                                                            //                'rgba(153, 102, 255, 1)',
-                                                            //                'rgba(255, 159, 64, 1)'
-                                                            //            ],
-                                                            //            borderWidth: 1
-                                                            //        }]
-                                                            //    },
-                                                            //    options: {
-                                                            //        responsive: true,
-                                                            //        plugins: {
-                                                            //            legend: {
-                                                            //                position: 'top',
-                                                            //            },
-                                                            //            title: {
-                                                            //                display: true,
-                                                            //                text: 'Pie Chart Example'
-                                                            //            }
-                                                            //        }
-                                                            //    }
-                                                            //});
+                                                          
                                                         }, 300)
 
-                                                        //setTimeout(() => {
-                                                        //    console.log("ok")
-                                                        //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
-                                                        //        var table = document.getElementById("checkouttable")
-                                                        //    })
-
-                                                        //}, 200)
+                                                    
                                                     })
 
                                                 })
-                                            //setTimeout(() => {
-                                            //    console.log("ok")
-                                            //    TabelElementsBuild("./templates/report.html", "#maincont", `./api/Inventory/return`, "CheckedOut", () => {
-                                            //        var table = document.getElementById("checkouttable")
-                                            //    })
-
-                                            //}, 200)
+                                           
                                         })
 
                                     })
                             })
-                            //fetch(`./api/Reports/employee/${uid}/checkouts-per-month`, { method: "GET" })
-                            //    .then(async responses => {
-                            //        let data = await responses.json();
-                            //        for (var [i, item] of Object.entries(data)) {
-                            //            console.log(i, item)
-                            //            chartcomp.addMonths(item.month)
-                            //            chartcomp.addData(item.count)
-                            //        }
-
-                            //        //console.log(checkoutbutton)
-                            //        const ctx = document.getElementById('myChart');
-                            //        if (ctx) {
-                            //            console.log(chartcomp.getMonths(), chartcomp.getData())
-                            //            new Chart(ctx, {
-                            //                type: 'line',
-                            //                data: {
-                            //                    labels: chartcomp.getMonths(),
-                            //                    datasets: [{
-                            //                        label: 'Number of Checkouts',
-                            //                        data: chartcomp.getData(),
-                            //                        borderColor: 'rgba(75, 192, 192, 1)',
-                            //                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            //                        tension: 0.3, // smooth curves
-                            //                        fill: true,
-                            //                        pointRadius: 5,
-                            //                        pointBackgroundColor: 'rgba(75, 192, 192, 1)'
-                            //                    }]
-                            //                },
-                            //                options: {
-                            //                    responsive: false,
-                            //                    plugins: {
-                            //                        title: {
-                            //                            display: true,
-                            //                            text: 'Tool Checked Out per Month'
-                            //                        }
-                            //                    },
-                            //                    scales: {
-                            //                        y: {
-                            //                            beginAtZero: true,
-                            //                            title: { display: true, text: 'Checked Out' }
-                            //                        },
-                            //                        x: {
-                            //                            title: { display: true, text: 'Month' }
-                            //                        }
-                            //                    }
-                            //                }
-                            //            });
-                            //        }
-
-                            //    })
+                           
                             ByMonthGraph(uid,true);
-                            //Nav("#navSelections");
+                           
                         }, 300)
 
                     })
